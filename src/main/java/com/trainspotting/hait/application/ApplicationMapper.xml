@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.trainspotting.hait.application.ApplicationMapper">
+	<select id="select" resultType="ApplcationEntity">
+		select * from t_applcation
+		where pk = #{pk}
+	</select>
+	
+	<update id="update">
+		update t_application
+		set process_status = #{process_status}
+		where owner_email = #{owner_email}
+	</update>
+	
+	<insert id="insert">
+		insert into t_owner
+		(nm, email, pw, contact)
+		values
+		(#{nm}, #{email}, #{pw}, #{contact})
+	</insert>
+</mapper>
