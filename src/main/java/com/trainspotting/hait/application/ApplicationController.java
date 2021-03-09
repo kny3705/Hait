@@ -9,15 +9,16 @@ import org.springframework.web.bind.annotation.RestController;
 import com.trainspotting.hait.model.ApplicationEntity;
 
 @RestController
-@RequestMapping("/api/applications")
+@RequestMapping("/api/admin/applications")
 public class ApplicationController {
 	
 	@Autowired
 	private ApplicationService service;
 	
-	@PutMapping("/{pk}")
+	@PutMapping
 	public int update(@RequestBody ApplicationEntity p) {
 //		System.out.println(p.getOwner_email());
+//		System.out.println(p.getProcess_status());
 		return service.update(p);
 	}
 }

@@ -15,7 +15,7 @@ import com.trainspotting.hait.model.ApplicationEntity;
 
 @CrossOrigin
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/home")
 public class HomeController {
 	
 	@Autowired
