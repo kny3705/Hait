@@ -51,5 +51,6 @@ public class ReservEntity {
 	public void setRegdate(String regdate) {
 		this.regdate = regdate;
 	}
+
 	
 }
