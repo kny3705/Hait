@@ -7,6 +7,7 @@ public class ReservEntity {
 	private int customer_pk;
 	private int headcount;
 	private int process_status;
+	private String regdate;
 	
 	public int getPk() {
 		return pk;
@@ -44,4 +45,11 @@ public class ReservEntity {
 	public void setProcess_status(int process_status) {
 		this.process_status = process_status;
 	}
+	public String getRegdate() {
+		return regdate;
+	}
+	public void setRegdate(String regdate) {
+		this.regdate = regdate;
+	}
+	
 }
