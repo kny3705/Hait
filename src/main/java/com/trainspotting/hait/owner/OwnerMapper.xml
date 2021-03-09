@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.trainspotting.hait.owner.OwnerMapper">
+
+	<!-- <insert id="insSetting"> INSERT INTO t_rstrnt ( contact, more_info, 
+		location, profile_img) SELECT A.owner_contact, A.more_info, #{location}, 
+		#{profile_img} FROM t_application A INNER JOIN t_owner B ON A.owner_email 
+		= B.email WHERE A.pk = #{pk}; </insert> -->
+
+	<update id="insRstrnt">
+		update t_rstrnt
+		set location = #{location}
+		,more_info = #{more_info}
+		,contact = #{contact}
+		,profile_img = #{profile_img}
+		WHERE owner_pk = #{owner_pk}
+	</update>
+
+
+	<!-- <select id="selOnwerInfo" resultType="OwnerEntity"> SELECT nm, email, 
+		contact, regdate FROM t_owner WHERE email = #{email} </select> -->
+
+	<select id="resvList" resultType="ReservEntity">
+		SELECT 
+		 seq, rstrnt_pk,
+		customer_pk, headcount, process_status
+		FROM t_reserv
+	</select>
+
+	<select id="resvDetail" resultType="ReservEntity">
+		SELECT 
+			seq, rstrnt_pk,
+		customer_pk, headcount
+		FROM t_reserv
+		WHERE pk = #{pk}
+	</select>
+
+	<select id="selRstrnt" resultType="RstrntEntity">
+		SELECT *
+		FROM t_rstrnt
+
+	</select>
+
+	<update id="updRstState">
+		UPDATE t_rstrnt
+		SET state = #{state}
+		WHERE owner_pk =
+		#{owner_pk}
+	</update>
+
+	<update id="updResStatus">
+		UPDATE t_reserv
+		SET process_status = #{process_status}
+		WHERE pk = #{pk}
+	</update>
+
+	<update id="updImgSetting">
+		UPDATE t_rstrnt
+		<set>
+			<if test=" profileImg != null">
+				profileImg = #{profileImg}
+			</if>
+		</set>
+		WHERE owner_pk = #{owner_pk}
+	</update>
+
+
+
+
+
+
+
+</mapper>

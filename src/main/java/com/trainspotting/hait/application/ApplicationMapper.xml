@@ -3,7 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.trainspotting.hait.application.ApplicationMapper">
-	<select id="select" resultType="ApplcationEntity">
+	<select id="select" resultType="ApplicationEntity">
 		select * from t_applcation
 		where pk = #{pk}
 	</select>

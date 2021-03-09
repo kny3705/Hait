@@ -44,4 +44,5 @@ public class ReservEntity {
 	public void setProcess_status(int process_status) {
 		this.process_status = process_status;
 	}
+	
 }

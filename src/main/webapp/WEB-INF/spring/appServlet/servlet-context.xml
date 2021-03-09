@@ -45,4 +45,5 @@
 	<mybatis-spring:scan base-package="com.trainspotting.hait"/>
 	
 	
+	
 </beans:beans>
