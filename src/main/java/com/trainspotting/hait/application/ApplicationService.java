@@ -20,23 +20,21 @@ public class ApplicationService {
 	
 	public int update(ApplicationEntity p) {
 		//TODO 받아온 값 확인!!
-		ApplicationEntity dbData = mapper.select(p);
 		
 		if(p.getProcess_status() == -1) {
-			mail.rejectMail(dbData.getOwner_email());
+			mail.rejectMail(p.getOwner_email());
 			
 		} else if (p.getProcess_status() == 1) {
 			String tempPW = UUID.randomUUID().toString().replaceAll("-", "");
 			tempPW = tempPW.substring(0, 10);
 			
 			OwnerEntity oe = new OwnerEntity();
-			oe.setNm(dbData.getOwner_nm());
-			oe.setEmail(dbData.getOwner_email());
-			oe.setContact(dbData.getOwner_email());
+			oe.setEmail(p.getOwner_email());
 			oe.setPw(tempPW);
-			mapper.insert(oe);
+			mapper.insOwner(oe);
+			mapper.insRstrnt(p);
 			
-			mail.acceptMail(dbData.getOwner_email(), tempPW);
+			mail.acceptMail(p.getOwner_email(), tempPW);
 		}
 		
 		return mapper.update(p);

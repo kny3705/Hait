@@ -9,5 +9,6 @@ import com.trainspotting.hait.model.OwnerEntity;
 public interface ApplicationMapper {
 	ApplicationEntity select(ApplicationEntity p);
 	int update(ApplicationEntity p);
-	int insert(OwnerEntity p);
+	int insOwner(OwnerEntity p);
+	int insRstrnt(ApplicationEntity p);
 }
