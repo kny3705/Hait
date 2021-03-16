@@ -10,6 +10,7 @@
 	<version>1.0.0-BUILD-SNAPSHOT</version>
 	<properties>
 		<org.springframework-version>4.3.30.RELEASE</org.springframework-version>
+		<io.jsonwebtoken-version>0.11.2</io.jsonwebtoken-version>
 		<org.aspectj-version>1.6.10</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
 	</properties>
@@ -38,6 +39,25 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-jdbc</artifactId>
 			<version>${org.springframework-version}</version>
+		</dependency>
+
+		<!-- json web token -->
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-api</artifactId>
+			<version>${io.jsonwebtoken-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-impl</artifactId>
+			<version>${io.jsonwebtoken-version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt-jackson</artifactId>
+			<version>${io.jsonwebtoken-version}</version>
+			<scope>runtime</scope>
 		</dependency>
 
 		<!-- AspectJ -->
@@ -169,7 +189,7 @@
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.4</version>
 		</dependency>
-		
+
 
 		<!-- sms service -->
 		<dependency>
@@ -236,7 +256,7 @@
 					<showDeprecation>true</showDeprecation>
 				</configuration>
 			</plugin>
-			<!-- java config 활성화에 필요-->
+			<!-- java config 활성화에 필요 -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-war-plugin</artifactId>
