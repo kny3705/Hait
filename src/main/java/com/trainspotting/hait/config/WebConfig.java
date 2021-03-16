@@ -16,8 +16,8 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import com.trainspotting.hait.admin.AdminInterceptor;
 
 @EnableWebMvc
-@MapperScan
-@ComponentScan
+@MapperScan(basePackages = "com.trainspotting.hait")
+@ComponentScan(basePackages = "com.trainspotting.hait")
 public class WebConfig extends WebMvcConfigurerAdapter {
 	
 	// view resolver
