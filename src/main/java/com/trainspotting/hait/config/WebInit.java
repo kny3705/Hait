@@ -1,8 +1,6 @@
-package com.trainspotting.hait.config.web;
+package com.trainspotting.hait.config;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
-
-import com.trainspotting.hait.config.security.SecurityConfig;
 
 public class WebInit extends AbstractAnnotationConfigDispatcherServletInitializer {
 
