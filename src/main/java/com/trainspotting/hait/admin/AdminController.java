@@ -17,37 +17,43 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.trainspotting.hait.ResponseBody;
-import com.trainspotting.hait.jwt.JwtProvider;
 import com.trainspotting.hait.model.AdminEntity;
 import com.trainspotting.hait.model.ApplicationEntity;
 
 @RestController
 @RequestMapping("/api/admin")
 public class AdminController {
-	
+
+	@Autowired
+	private HttpServletResponse response;
+
 	@Autowired
 	private AdminService service;
-	
-	@Autowired
-	private JwtProvider jwtProvider;
-	
-	@PostMapping("/login")
-	public ResponseEntity<ResponseBody> login(@RequestBody AdminEntity param, HttpServletResponse response) {
 
-		AdminEntity admin = service.login(param);
-		String token = jwtProvider.provideToken(admin.getId(), "ADMIN").getToken();
+	@PostMapping("/login")
+	public ResponseEntity<ResponseBody> login(@RequestBody AdminEntity admin) {
 		
-		response.addCookie(new Cookie("token", token));
-		
-		ResponseBody body = new ResponseBody(200, "LOGIN_SUCCESS", null);
-		return new ResponseEntity<>(body, null, HttpStatus.OK);
+		addTokenCookie(service.login(admin));
+		return new ResponseEntity<>(
+				new ResponseBody(200, "LOGIN_SUCCESS", null),
+				HttpStatus.OK
+				);
 	}
-	
+
+	@GetMapping("/logout")
+	public ResponseEntity<ResponseBody> logout() {
+		
+		addTokenCookie(null);
+		return new ResponseEntity<>(
+				new ResponseBody(200, "LOGOUT_SUCCESS", null),
+				HttpStatus.OK
+				);
+	}
+
 	@GetMapping("/applications")
 	public Map<String, Object> list(@RequestParam(required = false, defaultValue = "") String process_status) {
-		System.out.println(process_status.equals(""));
 		Map<String, Object> json = new HashMap<>();
-		switch(process_status) {
+		switch (process_status) {
 		case "":
 			json.put("data", service.listAll());
 			return json;
@@ -56,13 +62,22 @@ public class AdminController {
 			return json;
 		}
 	}
-	
+
 	@GetMapping("/applications/{pk}")
 	public Map<String, Object> detail(ApplicationEntity p) {
 		System.out.println(p.getPk());
 		Map<String, Object> json = new HashMap<>();
 		json.put("data", service.detail(p));
-		
+
 		return json;
+	}
+
+	private void addTokenCookie(String token) {
+		Cookie cookie = new Cookie("token", token);
+		cookie.setPath("/");
+		cookie.setSecure(true);
+		cookie.setHttpOnly(true);
+		cookie.setMaxAge(token == null ? 0 : (24 * 60 * 60));
+		response.addCookie(cookie);
 	}
 }

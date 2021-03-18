@@ -26,6 +26,7 @@ public class JwtProvider {
 	private String generateToken(String id, String role) {
 		Date expiry = new Date();
 		expiry.setTime(expiry.getTime() + (1000 * 60 * 60 * 2));
+//		expiry.setTime(expiry.getTime() + (500 * 60 * 1));
 		
 		String token = Jwts.builder()
 							.setSubject(id)
