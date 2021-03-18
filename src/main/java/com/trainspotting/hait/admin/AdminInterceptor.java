@@ -4,7 +4,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.trainspotting.hait.exception.UnauthenticatedException;
@@ -34,12 +33,6 @@ public class AdminInterceptor extends HandlerInterceptorAdapter {
 		if(!"ADMIN".equals(claims.get("role"))) throw new UnauthorizedException();
 		
 		return true;
-	}
-	
-	@Override
-	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-			ModelAndView modelAndView) throws Exception {
-		System.out.println("*** post handle ***");
 	}
 	
 	private String getToken(Cookie[] cookies) {
