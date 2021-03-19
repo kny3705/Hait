@@ -3,6 +3,7 @@ package com.trainspotting.hait.application;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.trainspotting.hait.mail.SendMail;
@@ -14,6 +15,9 @@ public class ApplicationService {
 
 	@Autowired
 	private ApplicationMapper mapper;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
 	private SendMail mail;
@@ -30,7 +34,7 @@ public class ApplicationService {
 			
 			OwnerEntity oe = new OwnerEntity();
 			oe.setEmail(p.getOwner_email());
-			oe.setPw(tempPW);
+			oe.setPw(passwordEncoder.encode(tempPW));
 			mapper.insOwner(oe);
 			mapper.insRstrnt(p);
 			
