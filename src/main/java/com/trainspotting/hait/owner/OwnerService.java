@@ -53,6 +53,21 @@ public class OwnerService {
 		return jwtProvider.provideToken(p.getEmail(), role, user.getRstrnt_pk()).getToken();
 	}
 	
+	public String initialSetting(MultipartFile file, RstrntDTO dto, String token) {
+		String filename = uploadProfileImg(file, dto.getPk());
+		
+		dto.setProfile_img(filename);
+		dto.setReset_pw(passwordEncoder.encode(dto.getReset_pw()));
+		
+		mapper.resetPw(dto);
+		mapper.updRstrntInfo(dto);
+		
+		Claims currentToken = jwtProvider.provideToken(token).getData();
+		String email = currentToken.getSubject();
+		int r_pk = (int) currentToken.get("r_pk");
+		return jwtProvider.provideToken(email, "OWNER", r_pk).getToken();
+	}
+	
 	}
 
 	// 고객정보 리스트
@@ -113,6 +128,12 @@ public class OwnerService {
 		String profileImg = fUtils.transferTo(profile, folder);
 		if (profileImg == null) { // 파일 생성 실패
 			return 0;
+
+	private String uploadProfileImg(MultipartFile file, int pk) {
+		try {
+			return fUtils.save(file, pk);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		// 기존이미지가 존재했다면 이미지 삭제!
@@ -127,6 +148,7 @@ public class OwnerService {
 
 		p.setProfile_img(profileImg);
 		return mapper.updImgSetting(p);
+		return null;
 	}
 
 	

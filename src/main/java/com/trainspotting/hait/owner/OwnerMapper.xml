@@ -18,7 +18,6 @@
 		WHERE owner_pk = #{owner_pk}
 	</update>
 
-
 	<!-- <select id="selOnwerInfo" resultType="OwnerEntity"> SELECT nm, email, 
 		contact, regdate FROM t_owner WHERE email = #{email} </select> -->
 		
@@ -30,6 +29,29 @@
 		WHERE email = #{email}
 	</select>
 
+	<update id="resetPw">
+		UPDATE t_owner
+		SET pw = #{reset_pw}
+		WHERE pk = #{owner_pk}
+	</update>
+
+	<select id="selRstrnt" resultType="RstrntEntity">
+		SELECT *
+		FROM t_rstrnt
+		WHERE pk = #{pk}
+	</select>
+
+	<update id="updRstrntInfo">
+		UPDATE t_rstrnt
+		SET 
+			contact = #{contact},
+			location = #{location},
+			more_info = #{more_info},
+			profile_img = #{profile_img},
+			enabled = true
+		WHERE pk = #{pk}
+	</update>
+	
 	<select id="resvList" resultType="ReservEntity">
 		SELECT 
 		 seq, rstrnt_pk,
@@ -45,11 +67,6 @@
 		WHERE pk = #{pk}
 	</select>
 
-	<select id="selRstrnt" resultType="RstrntEntity">
-		SELECT *
-		FROM t_rstrnt
-
-	</select>
 
 	<update id="updRstState">
 		UPDATE t_rstrnt

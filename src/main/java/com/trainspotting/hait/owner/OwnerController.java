@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -24,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.trainspotting.hait.ResponseBody;
 import com.trainspotting.hait.model.OwnerEntity;
 import com.trainspotting.hait.model.ReservEntity;
+import com.trainspotting.hait.model.RstrntDTO;
 import com.trainspotting.hait.model.RstrntEntity;
 
 @CrossOrigin
@@ -78,6 +80,14 @@ class OwnerController {
 		return service.insRstrnt(p);
 		//비밀번호 수정 (초기에 변경가능하게)
 
+	@PutMapping("/restaurant/initial")
+	public ResponseEntity<ResponseBody> initialSetting(MultipartFile file, RstrntDTO dto, HttpServletRequest request) {
+		dto.setPk((int) session.getAttribute("r_pk"));
+		addTokenCookie(service.initialSetting(file, dto, getToken(request))); 
+		return new ResponseEntity<>(
+				new ResponseBody(200, null, null),
+				HttpStatus.OK
+				);
 	}
 
 	//정보수정 프로필사진만
@@ -143,5 +153,15 @@ class OwnerController {
 		cookie.setHttpOnly(true);
 		cookie.setMaxAge(token == null ? 0 : (24 * 60 * 60));
 		response.addCookie(cookie);
+	}
+	
+	private String getToken(HttpServletRequest request) {
+		String token = null;
+		for(Cookie cookie : request.getCookies()) {
+			if("owner_token".equals(cookie.getName())) {
+				token = cookie.getValue();
+			}
+		}
+		return token;
 	}
 }
