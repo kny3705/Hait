@@ -3,6 +3,7 @@ package com.trainspotting.hait.owner;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -30,11 +31,18 @@ public class OwnerInterceptor extends HandlerInterceptorAdapter {
 		String token = getToken(cookies);
 		if(token == null) throw new UnauthenticatedException();
 		
-		if(request.getRequestURL().indexOf("/api/owner/initial-setting") > 0) {
-			return true;
+		Claims claims = jwtProvider.provideToken(token).getData();
+		
+		HttpSession session = request.getSession();
+		if(session.getAttribute("r_pk") == null) {
+			System.out.println("r_pk in token");
+			session.setAttribute("r_pk", claims.get("r_pk"));
 		}
 		
-		Claims claims = jwtProvider.provideToken(token).getData();
+		if(request.getRequestURL().indexOf("/restaurant/initial") > 0) {
+			 return true;
+		};
+		
 		if(!"OWNER".equals(claims.get("role"))) throw new UnauthorizedException();
 		
 		return true;
@@ -43,7 +51,7 @@ public class OwnerInterceptor extends HandlerInterceptorAdapter {
 	private String getToken(Cookie[] cookies) {
 		String token = null;
 		for(Cookie cookie : cookies) {
-			if("token".equals(cookie.getName())) {
+			if("owner_token".equals(cookie.getName())) {
 				token = cookie.getValue();
 			}
 		}

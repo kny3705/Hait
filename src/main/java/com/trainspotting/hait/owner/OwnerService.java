@@ -6,11 +6,15 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.trainspotting.hait.Utils.FileUtils;
 import com.trainspotting.hait.Utils.SendUtils;
+import com.trainspotting.hait.exception.LoginFailedException;
+import com.trainspotting.hait.jwt.JwtProvider;
+import com.trainspotting.hait.model.OwnerDTO;
 import com.trainspotting.hait.model.OwnerEntity;
 import com.trainspotting.hait.model.ReservEntity;
 import com.trainspotting.hait.model.RstrntEntity;
@@ -24,11 +28,31 @@ public class OwnerService {
 	@Autowired
 	private SendUtils smsUtil;
 
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private JwtProvider jwtProvider;
+	
 	@Autowired
 	private FileUtils fUtils;
 
 	public int selOwnerInfo(OwnerEntity p) {
 		return mapper.selOwnerInfo(p);
+	public String login(OwnerEntity p) {
+		OwnerDTO user = mapper.findUserByEmail(p.getEmail());
+		
+		if(user == null) {
+			throw new LoginFailedException("USER_NOT_FOUND");
+		}
+		if(!passwordEncoder.matches(p.getPw(), user.getPw())) {
+			throw new LoginFailedException("PASSWORD_MISMATCH");
+		}
+		String role = user.getRstrnt_enabled() == 1 ? "OWNER" : null;
+		return jwtProvider.provideToken(p.getEmail(), role, user.getRstrnt_pk()).getToken();
+	}
+	
 	}
 
 	// 고객정보 리스트

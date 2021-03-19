@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
-import com.trainspotting.hait.model.OwnerEntity;
+import com.trainspotting.hait.model.OwnerDTO;
 import com.trainspotting.hait.model.ReservEntity;
 import com.trainspotting.hait.model.RstrntEntity;
 
@@ -12,6 +12,7 @@ import com.trainspotting.hait.model.RstrntEntity;
 public interface OwnerMapper {
 
 	int selOwnerInfo(OwnerEntity p);
+	OwnerDTO findUserByEmail(String email);
 
 	//t_reserv
 	List<ReservEntity> resvList();

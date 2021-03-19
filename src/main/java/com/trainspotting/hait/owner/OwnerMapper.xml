@@ -21,6 +21,14 @@
 
 	<!-- <select id="selOnwerInfo" resultType="OwnerEntity"> SELECT nm, email, 
 		contact, regdate FROM t_owner WHERE email = #{email} </select> -->
+		
+	<select id="findUserByEmail" resultType="OwnerDTO">
+		SELECT pw, enabled AS rstrnt_enabled, r.pk as rstrnt_pk
+		FROM t_owner AS o
+		JOIN t_rstrnt AS r
+		ON o.pk = owner_pk
+		WHERE email = #{email}
+	</select>
 
 	<select id="resvList" resultType="ReservEntity">
 		SELECT 

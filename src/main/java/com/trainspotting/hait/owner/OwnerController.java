@@ -4,16 +4,24 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.trainspotting.hait.ResponseBody;
 import com.trainspotting.hait.model.OwnerEntity;
 import com.trainspotting.hait.model.ReservEntity;
 import com.trainspotting.hait.model.RstrntEntity;
@@ -24,15 +32,47 @@ import com.trainspotting.hait.model.RstrntEntity;
 class OwnerController {
 
 	@Autowired
+	private HttpServletResponse response;
+
+	@Autowired
+	private HttpSession session;
+
+	@Autowired
 	private OwnerService service;
 
 	// 로그인 할때 넘겨줄 정보
 	@PostMapping("/login")
 	public int ownerLogin(OwnerEntity p) {
 		return service.selOwnerInfo(p);
+	public ResponseEntity<ResponseBody> login(@RequestBody OwnerEntity p) {
+		addTokenCookie(service.login(p));
+		return new ResponseEntity<>(
+				new ResponseBody(200, "LOGIN_SUCCESS", null),
+				HttpStatus.OK
+				);
 	}
 
 	// 초기정보 셋팅
+	@GetMapping("/logout")
+	public ResponseEntity<ResponseBody> logout() {
+		System.out.println(session.getAttribute("r_pk"));
+		session.removeAttribute("r_pk");
+		addTokenCookie(null);
+		return new ResponseEntity<>(
+				new ResponseBody(200, "LOGOUT_SUCCESS", null),
+				HttpStatus.OK
+				);
+	}
+	
+	@GetMapping("/restaurant/initial")
+	public ResponseEntity<ResponseBody> restaurantInfo() {
+		int pk = (int) session.getAttribute("r_pk");
+		return new ResponseEntity<>(
+				new ResponseBody(200, null, service.selRstrnt(pk)),
+				HttpStatus.OK
+				);
+	}
+	
 	@PutMapping("/initial-setting")
 	public int insRstrnt(RstrntEntity p) {
 		return service.insRstrnt(p);
@@ -96,4 +136,12 @@ class OwnerController {
 
 	
 
+	private void addTokenCookie(String token) {
+		Cookie cookie = new Cookie("owner_token", token);
+		cookie.setPath("/");
+		cookie.setSecure(true);
+		cookie.setHttpOnly(true);
+		cookie.setMaxAge(token == null ? 0 : (24 * 60 * 60));
+		response.addCookie(cookie);
+	}
 }
