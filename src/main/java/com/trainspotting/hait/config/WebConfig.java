@@ -16,6 +16,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import com.trainspotting.hait.admin.AdminInterceptor;
 import com.trainspotting.hait.jwt.JwtProvider;
+import com.trainspotting.hait.owner.OwnerInterceptor;
 
 @EnableWebMvc
 @MapperScan(basePackages = "com.trainspotting.hait")
@@ -47,6 +48,11 @@ public class WebConfig extends WebMvcConfigurerAdapter {
 				.excludePathPatterns("/api/admin/login")
 				.excludePathPatterns("/api/admin/logout")
 				.addPathPatterns("/api/admin/**");
+		registry
+			.addInterceptor(new OwnerInterceptor(jwtProvider))
+				.excludePathPatterns("/api/owner/login")
+				.excludePathPatterns("/api/owner/logout")
+				.addPathPatterns("/api/owner/**");
 	}
 	
 	@Override
