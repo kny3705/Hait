@@ -16,14 +16,18 @@ public class JwtProvider {
 	}
 	
 	public JwtToken provideToken(String id, String role) {
-		return provideToken(generateToken(id, role));
+		return provideToken(generateToken(id, role, 0));
+	}
+	
+	public JwtToken provideToken(String id, String role, int r_pk) {
+		return provideToken(generateToken(id, role, r_pk));
 	}
 
 	public JwtToken provideToken(String token) {
 		return new JwtToken(token, key);
 	}
 	
-	private String generateToken(String id, String role) {
+	private String generateToken(String id, String role, int r_pk) {
 		Date expiry = new Date();
 		expiry.setTime(expiry.getTime() + (1000 * 60 * 60 * 2));
 //		expiry.setTime(expiry.getTime() + (500 * 60 * 1));
@@ -32,6 +36,7 @@ public class JwtProvider {
 							.setSubject(id)
 							.setExpiration(expiry)
 							.claim("role", role)
+							.claim("r_pk", r_pk)
 							.signWith(key, SignatureAlgorithm.HS256)
 							.compact();
 		return token;

@@ -38,7 +38,7 @@ public class AdminInterceptor extends HandlerInterceptorAdapter {
 	private String getToken(Cookie[] cookies) {
 		String token = null;
 		for(Cookie cookie : cookies) {
-			if("token".equals(cookie.getName())) {
+			if("admin_token".equals(cookie.getName())) {
 				token = cookie.getValue();
 			}
 		}
