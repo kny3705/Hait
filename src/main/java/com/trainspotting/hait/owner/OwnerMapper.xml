@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.trainspotting.hait.owner.OwnerMapper">
+
+	<!-- <insert id="insSetting"> INSERT INTO t_rstrnt ( contact, more_info, 
+		location, profile_img) SELECT A.owner_contact, A.more_info, #{location}, 
+		#{profile_img} FROM t_application A INNER JOIN t_owner B ON A.owner_email 
+		= B.email WHERE A.pk = #{pk}; </insert> -->
+
+	<update id="insRstrnt">
+		update t_rstrnt
+		set location = #{location}
+		,more_info = #{more_info}
+		,contact = #{contact}
+		,profile_img = #{profile_img}
+		WHERE owner_pk = #{owner_pk}
+	</update>
+
+	<!-- <select id="selOnwerInfo" resultType="OwnerEntity"> SELECT nm, email, 
+		contact, regdate FROM t_owner WHERE email = #{email} </select> -->
+		
+	<select id="findUserByEmail" resultType="OwnerDTO">
+		SELECT pw, enabled AS rstrnt_enabled, r.pk as rstrnt_pk
+		FROM t_owner AS o
+		JOIN t_rstrnt AS r
+		ON o.pk = owner_pk
+		WHERE email = #{email}
+	</select>
+
+	<update id="resetPw">
+		UPDATE t_owner
+		SET pw = #{reset_pw}
+		WHERE pk = #{owner_pk}
+	</update>
+
+	<select id="selRstrnt" resultType="RstrntEntity">
+		SELECT *
+		FROM t_rstrnt
+		WHERE pk = #{pk}
+	</select>
+
+	<update id="updRstrntInfo">
+		UPDATE t_rstrnt
+		SET 
+			contact = #{contact},
+			location = #{location},
+			more_info = #{more_info},
+			profile_img = #{profile_img},
+			enabled = true
+		WHERE pk = #{pk}
+	</update>
+	
+	<select id="selReservAll" resultType="ReservEntity" parameterType="_int">
+		SELECT 
+		 pk, seq, contact, headcount, regdate, process_status
+		FROM t_reserv
+		WHERE 
+			rstrnt_pk = #{r_pk}
+		AND
+			(process_status = 0 OR process_status = 1)
+	</select>
+
+	<select id="resvDetail" resultType="ReservEntity">
+		SELECT 
+			seq, rstrnt_pk,
+		customer_pk, headcount
+		FROM t_reserv
+		WHERE pk = #{pk}
+	</select>
+
+
+	<update id="updRstrntState">
+		UPDATE t_rstrnt
+		SET state = #{state}
+		WHERE pk = #{pk}
+	</update>
+
+	<update id="updResStatus">
+		UPDATE t_reserv
+		SET process_status = #{process_status}
+		WHERE pk = #{pk}
+	</update>
+	
+	<update id="updReservStatus">
+		UPDATE t_reserv
+		SET process_status = -2
+		WHERE rstrnt_pk = #{rstrnt_pk} AND process_status >= 0
+	</update>
+
+	<update id="updImgSetting">
+		UPDATE t_rstrnt
+		<set>
+			<if test=" profileImg != null">
+				profileImg = #{profileImg}
+			</if>
+		</set>
+		WHERE owner_pk = #{owner_pk}
+	</update>
+
+
+
+
+
+
+
+</mapper>

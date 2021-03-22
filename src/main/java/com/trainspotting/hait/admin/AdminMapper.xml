@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.trainspotting.hait.admin.AdminMapper">
+	<select id="listAll" resultType="ApplicationDTO">
+		select A.*, B.nm as city_nm from t_application A
+		inner join t_city B
+		on A.city_pk = B.pk
+		order by pk desc
+	</select>
+	
+	<select id="listStatus" resultType="ApplicationDTO">
+		select A.*, B.nm as city_nm from t_application A
+		inner join t_city B
+		on A.city_pk = B.pk
+		where process_status = #{process_status}
+		order by pk desc
+	</select>
+	
+	<select id="detail" resultType="ApplicationDTO">
+		select A.*, B.nm as city_nm from t_application A
+		inner join t_city B
+		on A.city_pk = B.pk
+		where A.pk = #{pk}
+	</select>
+</mapper>
