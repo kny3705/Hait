@@ -1,8 +1,9 @@
-package com.trainspotting.hait.admin;
+package com.trainspotting.hait.owner;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
@@ -12,10 +13,11 @@ import com.trainspotting.hait.jwt.JwtProvider;
 
 import io.jsonwebtoken.Claims;
 
-public class AdminInterceptor extends HandlerInterceptorAdapter {
+public class OwnerInterceptor extends HandlerInterceptorAdapter {
+
 	private final JwtProvider jwtProvider;
 	
-	public AdminInterceptor(JwtProvider jwtProvider) {
+	public OwnerInterceptor(JwtProvider jwtProvider) {
 		this.jwtProvider = jwtProvider;
 	}
 	
@@ -25,12 +27,23 @@ public class AdminInterceptor extends HandlerInterceptorAdapter {
 		
 		Cookie[] cookies = request.getCookies();
 		if(cookies == null) throw new UnauthenticatedException();
-		
+
 		String token = getToken(cookies);
 		if(token == null) throw new UnauthenticatedException();
 		
 		Claims claims = jwtProvider.provideToken(token).getData();
-		if(!"ADMIN".equals(claims.get("role"))) throw new UnauthorizedException();
+		
+		HttpSession session = request.getSession();
+		if(session.getAttribute("r_pk") == null) {
+			System.out.println("r_pk in token");
+			session.setAttribute("r_pk", claims.get("r_pk"));
+		}
+		
+		if(request.getRequestURL().indexOf("/restaurant/initial") > 0) {
+			 return true;
+		};
+		
+		if(!"OWNER".equals(claims.get("role"))) throw new UnauthorizedException();
 		
 		return true;
 	}
@@ -38,7 +51,7 @@ public class AdminInterceptor extends HandlerInterceptorAdapter {
 	private String getToken(Cookie[] cookies) {
 		String token = null;
 		for(Cookie cookie : cookies) {
-			if("admin_token".equals(cookie.getName())) {
+			if("owner_token".equals(cookie.getName())) {
 				token = cookie.getValue();
 			}
 		}

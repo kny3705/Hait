@@ -73,7 +73,7 @@ public class AdminController {
 	}
 
 	private void addTokenCookie(String token) {
-		Cookie cookie = new Cookie("token", token);
+		Cookie cookie = new Cookie("admin_token", token);
 		cookie.setPath("/");
 		cookie.setSecure(true);
 		cookie.setHttpOnly(true);

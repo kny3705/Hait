@@ -6,11 +6,15 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.trainspotting.hait.Utils.FileUtils;
 import com.trainspotting.hait.Utils.SendUtils;
+import com.trainspotting.hait.exception.LoginFailedException;
+import com.trainspotting.hait.jwt.JwtProvider;
+import com.trainspotting.hait.model.OwnerDTO;
 import com.trainspotting.hait.model.OwnerEntity;
 import com.trainspotting.hait.model.ReservEntity;
 import com.trainspotting.hait.model.RstrntEntity;
@@ -24,11 +28,46 @@ public class OwnerService {
 	@Autowired
 	private SendUtils smsUtil;
 
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
+	@Autowired
+	private JwtProvider jwtProvider;
+	
 	@Autowired
 	private FileUtils fUtils;
 
 	public int selOwnerInfo(OwnerEntity p) {
 		return mapper.selOwnerInfo(p);
+	public String login(OwnerEntity p) {
+		OwnerDTO user = mapper.findUserByEmail(p.getEmail());
+		
+		if(user == null) {
+			throw new LoginFailedException("USER_NOT_FOUND");
+		}
+		if(!passwordEncoder.matches(p.getPw(), user.getPw())) {
+			throw new LoginFailedException("PASSWORD_MISMATCH");
+		}
+		String role = user.getRstrnt_enabled() == 1 ? "OWNER" : null;
+		return jwtProvider.provideToken(p.getEmail(), role, user.getRstrnt_pk()).getToken();
+	}
+	
+	public String initialSetting(MultipartFile file, RstrntDTO dto, String token) {
+		String filename = uploadProfileImg(file, dto.getPk());
+		
+		dto.setProfile_img(filename);
+		dto.setReset_pw(passwordEncoder.encode(dto.getReset_pw()));
+		
+		mapper.resetPw(dto);
+		mapper.updRstrntInfo(dto);
+		
+		Claims currentToken = jwtProvider.provideToken(token).getData();
+		String email = currentToken.getSubject();
+		int r_pk = (int) currentToken.get("r_pk");
+		return jwtProvider.provideToken(email, "OWNER", r_pk).getToken();
+	}
+	
 	}
 
 	// 고객정보 리스트
@@ -89,6 +128,12 @@ public class OwnerService {
 		String profileImg = fUtils.transferTo(profile, folder);
 		if (profileImg == null) { // 파일 생성 실패
 			return 0;
+
+	private String uploadProfileImg(MultipartFile file, int pk) {
+		try {
+			return fUtils.save(file, pk);
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		// 기존이미지가 존재했다면 이미지 삭제!
@@ -103,6 +148,7 @@ public class OwnerService {
 
 		p.setProfile_img(profileImg);
 		return mapper.updImgSetting(p);
+		return null;
 	}
 
 	
