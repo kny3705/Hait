@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,8 +43,6 @@ class OwnerController {
 
 	// 로그인 할때 넘겨줄 정보
 	@PostMapping("/login")
-	public int ownerLogin(OwnerEntity p) {
-		return service.selOwnerInfo(p);
 	public ResponseEntity<ResponseBody> login(@RequestBody OwnerEntity p) {
 		addTokenCookie(service.login(p));
 		return new ResponseEntity<>(
@@ -57,7 +54,6 @@ class OwnerController {
 	// 초기정보 셋팅
 	@GetMapping("/logout")
 	public ResponseEntity<ResponseBody> logout() {
-		System.out.println(session.getAttribute("r_pk"));
 		session.removeAttribute("r_pk");
 		addTokenCookie(null);
 		return new ResponseEntity<>(
@@ -74,14 +70,9 @@ class OwnerController {
 				HttpStatus.OK
 				);
 	}
-	
-	@PutMapping("/initial-setting")
-	public int insRstrnt(RstrntEntity p) {
-		return service.insRstrnt(p);
-		//비밀번호 수정 (초기에 변경가능하게)
 
 	@PutMapping("/restaurant/initial")
-	public ResponseEntity<ResponseBody> initialSetting(MultipartFile file, RstrntDTO dto, HttpServletRequest request) {
+	public ResponseEntity<ResponseBody> initialSetting(MultipartFile file, RstrntDTO dto, HttpServletRequest request) throws Exception {
 		dto.setPk((int) session.getAttribute("r_pk"));
 		addTokenCookie(service.initialSetting(file, dto, getToken(request))); 
 		return new ResponseEntity<>(
@@ -90,15 +81,6 @@ class OwnerController {
 				);
 	}
 
-	//정보수정 프로필사진만
-	
-	@PutMapping("/profile") 
-	public int updImgSetting(MultipartFile profile, RstrntEntity p){ 
-		 return service.updImgSetting(profile, p); 
-		 //비밀번호 수정 
-	 
-	}
-	 
 	 // 고객 정보 List
 	@GetMapping("/resvInfoList")
 	public Map<String, Object> cstomInfoList() {
