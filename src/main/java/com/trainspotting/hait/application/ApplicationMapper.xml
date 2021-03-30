@@ -7,18 +7,21 @@
 		select * from t_application 
 		where owner_email = #{owner_email}
 		and process_status > -1
+		limit 1
 	</select>
 	
 	<select id="findOwnerContact" resultType="ApplicationEntity">
 		select * from t_application 
 		where owner_contact = #{owner_contact}
 		and process_status > -1
+		limit 1
 	</select>
 	
 	<select id="findRstrntName" resultType="ApplicationEntity">
 		select * from t_application 
 		where rstrnt_nm = #{rstrnt_nm}
 		and process_status > -1
+		limit 1
 	</select>
 	
 	<insert id="insert">

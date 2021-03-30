@@ -45,5 +45,6 @@
 		FROM t_reserv
 		WHERE contact = #{contact}
 		AND (process_status = 0 OR process_status = 1)
+		LIMIT 1
 	</select>
 </mapper>
